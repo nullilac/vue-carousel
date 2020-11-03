@@ -96,9 +96,16 @@ export default {
           : e.clientX;
       const deltaX = this.carousel.dragStartX - eventPosX;
 
+      const eventPosY =
+        this.carousel.isTouch && e.changedTouches && e.changedTouches.length > 0
+          ? e.changedTouches[0].clientY
+          : e.clientY;
+      const deltaY = this.carousel.dragStartY - eventPosY;
+
       if (
         this.carousel.minSwipeDistance === 0 ||
-        Math.abs(deltaX) < this.carousel.minSwipeDistance
+        (Math.abs(deltaX) < this.carousel.minSwipeDistance &&
+          Math.abs(deltaY) < this.carousel.minSwipeDistance)
       ) {
         this.$emit("slideclick", Object.assign({}, e.currentTarget.dataset));
         this.$emit("slide-click", Object.assign({}, e.currentTarget.dataset));

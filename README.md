@@ -1,4 +1,10 @@
-# Vue Carousel
+# FORK FROM 'Vue Carousel'
+
+## Improvements
+
+- Bug fix: false click when scroll vertical. Added a check for y-axis deviation
+
+## Original readme below
 
 [![Build Status](https://travis-ci.org/SSENSE/vue-carousel.svg?branch=master)](https://travis-ci.org/SSENSE/vue-carousel)
 [![Coverage Status](https://coveralls.io/repos/github/SSENSE/vue-carousel/badge.svg?branch=master)](https://coveralls.io/github/SSENSE/vue-carousel?branch=master)
