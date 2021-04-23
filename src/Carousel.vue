@@ -60,21 +60,11 @@ const transitionEndNames = {
     onotransitionend: "oTransitionEnd otransitionend",
     ontransitionend: "transitionend",
 };
-const getTransitionStart = () => {
-    if (typeof window !== "undefined") {
-        for (let name in transitionStartNames) {
-            if (name in window) {
-                return transitionStartNames[name];
-            }
-        }
-    }
-};
+
 const getTransitionEnd = () => {
-    if (typeof window !== "undefined") {
-        for (let name in transitionEndNames) {
-            if (name in window) {
-                return transitionEndNames[name];
-            }
+    for (let name in transitionEndNames) {
+        if (name in window) {
+            return transitionEndNames[name];
         }
     }
 };
@@ -82,9 +72,7 @@ const getTransitionEnd = () => {
 export default {
     name: "carousel",
     beforeUpdate() {
-        if (typeof window !== "undefined") {
-            this.computeCarouselWidth();
-        }
+        this.computeCarouselWidth();
     },
     components: {
         Navigation,
@@ -101,7 +89,7 @@ export default {
             dragOffset: 0,
             dragStartY: 0,
             dragStartX: 0,
-            isTouch: typeof window !== "undefined" && "ontouchstart" in window,
+            isTouch: false,
             offset: 0,
             refreshRate: 16,
             slideCount: 0,
@@ -578,41 +566,39 @@ export default {
          * in order to keep the magnet container in sync with the height its reference node.
          */
         attachMutationObserver() {
-            if (typeof window !== "undefined") {
-                const MutationObserver =
-                    window.MutationObserver ||
-                    window.WebKitMutationObserver ||
-                    window.MozMutationObserver;
+            const MutationObserver =
+                window.MutationObserver ||
+                window.WebKitMutationObserver ||
+                window.MozMutationObserver;
 
-                if (MutationObserver) {
-                    let config = {
-                        attributes: true,
-                        data: true,
+            if (MutationObserver) {
+                let config = {
+                    attributes: true,
+                    data: true,
+                };
+                if (this.adjustableHeight) {
+                    config = {
+                        ...config,
+                        childList: true,
+                        subtree: true,
+                        characterData: true,
                     };
-                    if (this.adjustableHeight) {
-                        config = {
-                            ...config,
-                            childList: true,
-                            subtree: true,
-                            characterData: true,
-                        };
-                    }
-                    this.mutationObserver = new MutationObserver(() => {
-                        this.$nextTick(() => {
-                            this.computeCarouselWidth();
-                            this.computeCarouselHeight();
-                        });
+                }
+                this.mutationObserver = new MutationObserver(() => {
+                    this.$nextTick(() => {
+                        this.computeCarouselWidth();
+                        this.computeCarouselHeight();
                     });
-                    if (this.$parent.$el) {
-                        let carouselInnerElements = this.$el.getElementsByClassName(
-                            "VueCarousel-inner"
+                });
+                if (this.$parent.$el) {
+                    let carouselInnerElements = this.$el.getElementsByClassName(
+                        "VueCarousel-inner"
+                    );
+                    for (let i = 0; i < carouselInnerElements.length; i++) {
+                        this.mutationObserver.observe(
+                            carouselInnerElements[i],
+                            config
                         );
-                        for (let i = 0; i < carouselInnerElements.length; i++) {
-                            this.mutationObserver.observe(
-                                carouselInnerElements[i],
-                                config
-                            );
-                        }
                     }
                 }
             }
@@ -970,61 +956,60 @@ export default {
         },
     },
     mounted() {
-        if (typeof window !== "undefined") {
-            window.addEventListener(
-                "resize",
-                debounce(this.onResize, this.refreshRate)
-            );
+        this.isTouch =
+            typeof window !== "undefined" && "ontouchstart" in window;
 
-            // setup the start event only if touch device or mousedrag activated
-            if ((this.isTouch && this.touchDrag) || this.mouseDrag) {
-                this.$refs["VueCarousel-wrapper"].addEventListener(
-                    this.isTouch ? "touchstart" : "mousedown",
-                    this.onStart
-                );
-            }
+        window.addEventListener(
+            "resize",
+            debounce(this.onResize, this.refreshRate)
+        );
 
-            this.attachMutationObserver();
-            this.computeCarouselWidth();
-            this.computeCarouselHeight();
-
-            this.transitionstart = getTransitionEnd();
-            this.$refs["VueCarousel-inner"].addEventListener(
-                this.transitionstart,
-                this.handleTransitionStart
-            );
-            this.transitionend = getTransitionEnd();
-            this.$refs["VueCarousel-inner"].addEventListener(
-                this.transitionend,
-                this.handleTransitionEnd
-            );
-
-            this.$emit("mounted");
-
-            // when autoplay direction is backward start from the last slide
-            if (this.autoplayDirection === "backward") {
-                this.goToLastSlide();
-            }
-        }
-    },
-    beforeDestroy() {
-        if (typeof window !== "undefined") {
-            this.detachMutationObserver();
-            window.removeEventListener("resize", this.getBrowserWidth);
-            this.$refs["VueCarousel-inner"].removeEventListener(
-                this.transitionstart,
-                this.handleTransitionStart
-            );
-            this.$refs["VueCarousel-inner"].removeEventListener(
-                this.transitionend,
-                this.handleTransitionEnd
-            );
-
-            this.$refs["VueCarousel-wrapper"].removeEventListener(
+        // setup the start event only if touch device or mousedrag activated
+        if ((this.isTouch && this.touchDrag) || this.mouseDrag) {
+            this.$refs["VueCarousel-wrapper"].addEventListener(
                 this.isTouch ? "touchstart" : "mousedown",
                 this.onStart
             );
         }
+
+        this.attachMutationObserver();
+        this.computeCarouselWidth();
+        this.computeCarouselHeight();
+
+        this.transitionstart = getTransitionEnd();
+        this.$refs["VueCarousel-inner"].addEventListener(
+            this.transitionstart,
+            this.handleTransitionStart
+        );
+        this.transitionend = getTransitionEnd();
+        this.$refs["VueCarousel-inner"].addEventListener(
+            this.transitionend,
+            this.handleTransitionEnd
+        );
+
+        this.$emit("mounted");
+
+        // when autoplay direction is backward start from the last slide
+        if (this.autoplayDirection === "backward") {
+            this.goToLastSlide();
+        }
+    },
+    beforeDestroy() {
+        this.detachMutationObserver();
+        window.removeEventListener("resize", this.getBrowserWidth);
+        this.$refs["VueCarousel-inner"].removeEventListener(
+            this.transitionstart,
+            this.handleTransitionStart
+        );
+        this.$refs["VueCarousel-inner"].removeEventListener(
+            this.transitionend,
+            this.handleTransitionEnd
+        );
+
+        this.$refs["VueCarousel-wrapper"].removeEventListener(
+            this.isTouch ? "touchstart" : "mousedown",
+            this.onStart
+        );
     },
 };
 </script>
