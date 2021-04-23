@@ -48,25 +48,11 @@ import Navigation from "./Navigation.vue";
 import Pagination from "./Pagination.vue";
 import Slide from "./Slide.vue";
 
-const transitionStartNames = {
-    onwebkittransitionstart: "webkitTransitionStart",
-    onmoztransitionstart: "transitionstart",
-    onotransitionstart: "oTransitionStart otransitionstart",
-    ontransitionstart: "transitionstart",
-};
 const transitionEndNames = {
     onwebkittransitionend: "webkitTransitionEnd",
     onmoztransitionend: "transitionend",
     onotransitionend: "oTransitionEnd otransitionend",
     ontransitionend: "transitionend",
-};
-
-const getTransitionEnd = () => {
-    for (let name in transitionEndNames) {
-        if (name in window) {
-            return transitionEndNames[name];
-        }
-    }
 };
 
 export default {
@@ -269,7 +255,6 @@ export default {
          * Configure the number of visible slides with a particular browser width.
          * This will be an array of arrays, ex. [[320, 2], [1199, 4]]
          * Formatted as [x, y] where x=browser width, and y=number of slides displayed.
-         * ex. [1199, 4] means if (window <= 1199) then show 4 slides per page
          */
         perPageCustom: {
             type: Array,
@@ -958,6 +943,14 @@ export default {
     mounted() {
         this.isTouch =
             typeof window !== "undefined" && "ontouchstart" in window;
+
+        const getTransitionEnd = () => {
+            for (let name in transitionEndNames) {
+                if (name in window) {
+                    return transitionEndNames[name];
+                }
+            }
+        };
 
         window.addEventListener(
             "resize",
