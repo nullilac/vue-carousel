@@ -1,6 +1,6 @@
 {
   "name": "vue-carousel",
-  "version": "0.18.0",
+  "version": "0.20.0",
   "description": "A flexible, responsive, touch-friendly carousel for Vue.js",
   "main": "dist/vue-carousel.min.js",
   "scripts": {
@@ -38,7 +38,7 @@
     "vue": "^2.5.17"
   },
   "resolutions": {
-     "babel-core": "7.0.0-bridge.0"
+    "babel-core": "7.0.0-bridge.0"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",

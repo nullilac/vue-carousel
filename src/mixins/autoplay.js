@@ -35,7 +35,7 @@ const autoplay = {
     };
   },
   destroyed() {
-    if (!this.$isServer) {
+    if (typeof window !== 'undefined' && !this.$isServer) {
       this.$el.removeEventListener("mouseenter", this.pauseAutoplay);
       this.$el.removeEventListener("mouseleave", this.startAutoplay);
     }
@@ -63,7 +63,7 @@ const autoplay = {
     }
   },
   mounted() {
-    if (!this.$isServer && this.autoplayHoverPause) {
+    if (typeof window !== 'undefined' && !this.$isServer && this.autoplayHoverPause) {
       this.$el.addEventListener("mouseenter", this.pauseAutoplay);
       this.$el.addEventListener("mouseleave", this.startAutoplay);
     }
