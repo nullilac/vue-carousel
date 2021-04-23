@@ -4,21 +4,11 @@
   "description": "A flexible, responsive, touch-friendly carousel for Vue.js",
   "main": "dist/vue-carousel.min.js",
   "scripts": {
-    "build": "webpack --config webpack.prod.js && npm run updateDocAssets",
-    "coveralls": "cat coverage/client/lcov.info | ./node_modules/.bin/coveralls",
-    "dev": "vue-play start --standalone",
-    "dev:build": "vue-play build",
-    "docs:build": "npm run build && rm -rf ./docs/public && mkdir ./docs/public/ && cd ./docs/public/ && git init && git remote add origin git@github.com:SSENSE/vue-carousel.git && git fetch && git checkout -f gh-pages && cd .. && npm install && ./node_modules/.bin/hexo clean && ./node_modules/.bin/hexo generate",
-    "lint": "prettier-eslint --write \"src/**/?(*.js|*.vue)\" || exit 1",
-    "test": "npm run test:client",
-    "test:client": "jest --config tests/client.jest.json",
-    "test:client:coverage": "jest --config tests/client.jest.json --coverage",
-    "test-coverage": "npm run test:client:coverage",
-    "updateDocAssets": "cp ./dist/vue-carousel.min.js ./docs/themes/vue/source/js/"
+    "build": "webpack --config webpack.prod.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/SSENSE/vue-carousel.git"
+    "url": "git+ssh://git@github.com:nullilac/vue-carousel.git"
   },
   "keywords": [
     "Vue",
@@ -31,11 +21,11 @@
   "bugs": {
     "url": "https://github.com/ssense/vue-carousel/issues"
   },
-  "homepage": "https://github.com/ssense/vue-carousel#readme",
+  "homepage": "https://github.com/nullilac/vue-carousel#readme",
   "dependencies": {
     "global": "^4.3.2",
     "regenerator-runtime": "^0.12.1",
-    "vue": "^2.5.17"
+    "vue": "^2.6.12"
   },
   "resolutions": {
     "babel-core": "7.0.0-bridge.0"
